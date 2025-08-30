@@ -29,7 +29,7 @@ export function ProjectDetail() {
         transition={{ type: "spring", stiffness: 120, damping: 20 }}
         className="
           relative w-full h-full sm:h-[90vh] sm:w-[95%] lg:w-[80%] xl:max-w-7xl
-          rounded-2xl  overflow-auto shadow-[0_0_30px_rgba(0,255,255,0.5)]
+          rounded-2xl  overflow-hidden shadow-[0_0_30px_rgba(0,255,255,0.5)]
         "
       >
         {/* Neon Border Layer */}

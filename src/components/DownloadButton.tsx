@@ -16,29 +16,55 @@ export function DownloadButton({
   const [downloading, setDownloading] = useState(false);
 
   // Extract file ID from Google Drive URL
-  const fileId = zipUrl?.match(/[-\w]{25,}/)?.[0]; 
+  const fileId = zipUrl?.match(/[-\w]{25,}/)?.[0];
 
   const zipUrls = fileId
     ? `https://drive.google.com/uc?export=download&id=${fileId}`
     : undefined;
+  const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+    navigator.userAgent
+  );
 
-  const handleDownload = () => {
-    if (!zipUrls) return;
+  const handleDownload = async () => {
+    if (!zipUrl) return;
     setDownloading(true);
-    
-  
-    setTimeout(() => {
-      const link = document.createElement("a");
-      link.href = zipUrls;
-      link.download = `${fileName}.zip`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-  
+
+    try {
+      if (isMobile) {
+        // Fetch file as blob
+        const response = await fetch(zipUrl);
+        if (!response.ok) throw new Error("Network response was not ok");
+        const blob = await response.blob();
+
+        // Create temporary link to trigger download
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = `${fileName}.zip`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+
+        // Revoke object URL after download
+        URL.revokeObjectURL(link.href);
+      } else {
+        setTimeout(() => {
+          const link = document.createElement("a");
+          link.href = zipUrls;
+          link.download = `${fileName}.zip`;
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+
+          setDownloading(false);
+        }, 1200);
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Download failed. Check your internet or file permissions.");
+    } finally {
       setDownloading(false);
-    }, 1200);
+    }
   };
-  
 
   return (
     <motion.button
