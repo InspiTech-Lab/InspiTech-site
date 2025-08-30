@@ -1,10 +1,11 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
-import { Clock } from "lucide-react";
+import {  Clock } from "lucide-react";
 import { Project } from "../../types/project";
 import { useAppSelector } from "../../hooks/redux";
 
 import { CursorFollowButton } from "../CursorFollowButton";
+
 
 interface ProjectCardProps {
   project: Project;
@@ -20,6 +21,7 @@ export function ProjectCard({ project, index }: ProjectCardProps) {
   return (
     <>
       <motion.div
+ 
         animate={{ opacity: 1, y: 0 }}
         transition={{
           duration: 0.6,
@@ -153,7 +155,10 @@ export function ProjectCard({ project, index }: ProjectCardProps) {
                 Live Demo
               </motion.button> */}
               {project.isPublished && (
-                <CursorFollowButton label="Live Demo" to={project.title} />
+                <CursorFollowButton
+                  label="Live Demo"
+                  to={project.title}
+                />
               )}
             </div>
           )}
@@ -161,6 +166,7 @@ export function ProjectCard({ project, index }: ProjectCardProps) {
       </motion.div>
 
       {/* Demo Modal */}
+
     </>
   );
 }
