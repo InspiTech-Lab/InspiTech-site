@@ -12,7 +12,7 @@ export function ProjectDetail() {
 
   // Find project by title (case-insensitive)
   const project = projects.find(
-    (p) => p.title.toLowerCase() === title?.toLowerCase()
+    (p) => p?.title.toLowerCase() === title?.toLowerCase()
   );
 
   return (
@@ -49,21 +49,21 @@ export function ProjectDetail() {
           {/* Header */}
           <div className="flex items-center justify-between px-4 py-2 border-b bg-slate-900/80 border-white/10">
             <h3 className="font-semibold text-white">
-              {project.title} - Live Demo
+              {project?.title} - Live Demo
             </h3>
 
             <div className="flex items-center gap-2">
               {/* Download Button placed here */}
-              {project.zipUrl && (
+              {project?.zipUrl && (
                 <DownloadButton
-                  zipUrl={project.zipUrl}
-                  fileName={project.title}
+                  zipUrl={project?.zipUrl}
+                  fileName={project?.title}
                 />
               )}
 
               <motion.button
                 onClick={() => navigate("/")}
-                className="px-4 py-2 text-sm font-semibold text-white transition-all duration-500 rounded-lg shadow-lg  bg-gradient-to-r from-pink-500 via-purple-500 to-blue-500 hover:from-blue-500 hover:via-purple-500 hover:to-pink-500"
+                className="px-4 py-2 text-sm font-semibold text-white transition-all duration-500 rounded-lg shadow-lg bg-gradient-to-r from-pink-500 via-purple-500 to-blue-500 hover:from-blue-500 hover:via-purple-500 hover:to-pink-500"
                 initial={{ scale: 0.8, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 whileHover={{ scale: 1.1 }}
@@ -86,9 +86,9 @@ export function ProjectDetail() {
                 />
               </div>
             )}
-            {project.liveDemo && (
+            {project?.liveDemo && (
               <iframe
-                src={project.liveDemo}
+                src={project?.liveDemo}
                 className="flex-1 w-full h-full rounded-b-2xl"
                 title={`${project.title} Demo`}
                 onLoad={() => setIsLoading(false)}
