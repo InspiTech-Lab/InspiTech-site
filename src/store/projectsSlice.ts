@@ -1,26 +1,27 @@
-import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
-import { Project, ProjectsState } from '../types/project';
-import { googleSheetsService } from '../services/googleSheets';
+// store/projectsSlice.ts
+import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
+import { Project, ProjectsState } from "../types/project";
+import { googleSheetsService } from "../services/googleSheets";
 
-// Async thunk for fetching projects from Google Sheets
-export const fetchProjects = createAsyncThunk(
-  'projects/fetchProjects',
-  async (_, { rejectWithValue }) => {
+// ✅ Fetch projects
+export const fetchProjects = createAsyncThunk("projects/fetchProjects", async (_, { rejectWithValue }) => {
+  try {
+    const response = await googleSheetsService.fetchProjects();
+    return response || [];
+  } catch (error) {
+    return rejectWithValue(error instanceof Error ? error.message : "Unknown error");
+  }
+});
+
+// ✅ Upload project
+export const uploadProject = createAsyncThunk(
+  "projects/uploadProject",
+  async (payload: any, { rejectWithValue }) => {
     try {
-      // Replace with your Google Apps Script URL
-      // const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec';
-      
-      const response = await googleSheetsService.fetchProjects();
-
-      // if (!response.ok) {
-      //   throw new Error('Failed to fetch projects');
-      // }
-      
-      const data = await response;
-      // console.log('Projects data:', data);
-      return data || [];
+      const response = await googleSheetsService.uploadProject(payload);
+      return response;
     } catch (error) {
-      return rejectWithValue(error instanceof Error ? error.message : 'Unknown error');
+      return rejectWithValue(error instanceof Error ? error.message : "Unknown error");
     }
   }
 );
@@ -30,15 +31,15 @@ const initialState: ProjectsState = {
   filteredProjects: [],
   loading: false,
   error: null,
-  searchQuery: '',
+  searchQuery: "",
   currentPage: 1,
   itemsPerPage: 12,
-  selectedCategory: 'all',
+  selectedCategory: "all",
   totalProjects: 0,
 };
 
 const projectsSlice = createSlice({
-  name: 'projects',
+  name: "projects",
   initialState,
   reducers: {
     setSearchQuery: (state, action: PayloadAction<string>) => {
@@ -64,6 +65,7 @@ const projectsSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
+      // Fetch
       .addCase(fetchProjects.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -76,15 +78,25 @@ const projectsSlice = createSlice({
       .addCase(fetchProjects.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
+      })
+
+      // Upload
+      .addCase(uploadProject.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(uploadProject.fulfilled, (state) => {
+        state.loading = false;
+      })
+      .addCase(uploadProject.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
       });
   },
 });
 
-// Helper function to apply search and category filters
 function applyFilters(state: ProjectsState) {
   let filtered = [...state.projects];
-
-  // Apply search filter
   if (state.searchQuery.trim()) {
     const query = state.searchQuery.toLowerCase();
     filtered = filtered.filter(
@@ -93,24 +105,16 @@ function applyFilters(state: ProjectsState) {
         project.description.toLowerCase().includes(query)
     );
   }
-
-  // Apply category filter (you can extend this based on project categories)
-  if (state.selectedCategory !== 'all') {
+  if (state.selectedCategory !== "all") {
     filtered = filtered.filter((project) =>
       project.description.toLowerCase().includes(state.selectedCategory.toLowerCase())
     );
   }
-
   state.filteredProjects = filtered;
   state.totalProjects = filtered.length;
 }
 
-export const {
-  setSearchQuery,
-  setSelectedCategory,
-  setCurrentPage,
-  setItemsPerPage,
-  clearError,
-} = projectsSlice.actions;
+export const { setSearchQuery, setSelectedCategory, setCurrentPage, setItemsPerPage, clearError } =
+  projectsSlice.actions;
 
 export default projectsSlice.reducer;

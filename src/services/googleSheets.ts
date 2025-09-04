@@ -1,6 +1,5 @@
-import { Project } from '../types/project';
-
-
+// services/googleSheets.ts
+import { Project } from "../types/project";
 
 export class GoogleSheetsService {
   private static instance: GoogleSheetsService;
@@ -8,7 +7,6 @@ export class GoogleSheetsService {
   private apiToken: string;
 
   private constructor() {
-    // Read from Vite env
     this.appsScriptUrl = import.meta.env.VITE_APPS_SCRIPT_URL;
     this.apiToken = import.meta.env.VITE_API_TOKEN;
   }
@@ -21,27 +19,29 @@ export class GoogleSheetsService {
   }
 
   async fetchProjects(): Promise<Project[]> {
-    try {
-      const url = `${this.appsScriptUrl}?token=${this.apiToken}`;
-      const response = await fetch(url);
+    const url = `${this.appsScriptUrl}?token=${this.apiToken}`;
+    const response = await fetch(url);
 
+    if (!response.ok) throw new Error("Failed to fetch projects from Google Sheets");
 
+    const data = await response.json();
+    let projects: Project[] = data.projects || [];
 
-      if (!response.ok) {
-        throw new Error("Failed to fetch projects from Google Sheets");
-      }
-
-      const data = await response.json();
-
-      return data.projects || [];
-    } catch (error) {
-      console.error("Error fetching projects:", error);
-      throw error;
-    }
+    projects.sort((a, b) => Number(b.id) - Number(a.id));
+    return projects;
   }
 
-  setAppsScriptUrl(url: string) {
-    this.appsScriptUrl = url;
+  async uploadProject(payload: any): Promise<any> {
+    const url = this.appsScriptUrl;
+
+    const response = await fetch(url, {
+      method: "POST",
+      body: JSON.stringify(payload),
+    });
+
+    if (!response.ok) throw new Error("Failed to upload project");
+
+    return response.json();
   }
 }
 
