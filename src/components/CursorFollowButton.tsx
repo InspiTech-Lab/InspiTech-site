@@ -55,7 +55,7 @@ export function CursorFollowButton({
           transition={{ type: "spring", stiffness: 250, damping: 25 }}
         >
           <motion.div
-            className="w-full px-2 py-1 text-sm font-medium text-center text-white border rounded-full shadow-lg pointer-events-auto bg-white/10 backdrop-blur-md border-white/20"
+            className="w-full px-2 py-1 text-sm font-medium text-center text-black border rounded-full shadow-lg pointer-events-auto bg-white/10 backdrop-blur-md border-white/20"
             initial={{ scale: 0.8, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.8, opacity: 0 }}

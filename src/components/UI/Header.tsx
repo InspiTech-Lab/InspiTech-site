@@ -58,25 +58,22 @@ export function Header() {
         }`}
       >
         <div className="flex flex-col items-center justify-between mx-auto sm:flex-row sm:px-6 sm:py-4 max-w-7xl">
-          {/* Logo / Title */}
-          <motion.div
-            whileHover={{ scale: 1.05 }}
-            transition={{ type: "spring", stiffness: 200 }}
-            className="flex items-center gap-2"
+          <motion.h1
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2, duration: 0.6 }}
+            className={`text-lg sm:text-xl md:text-2xl font-extrabold tracking-tight 
+              bg-clip-text text-transparent 
+              ${
+                isDarkMode
+                  ? "bg-gradient-to-r from-cyan-400 to-purple-600"
+                  : "bg-gradient-to-r from-purple-600 to-blue-600"
+              }
+              `}
           >
-            <img
-              src="./public/Wordmark_Logo_with_Integrated_Icon_for_Inspitech-removebg-preview.png"
-              alt="Logo"
-              className="object-contain w-32 h-32" // increased from w-6 h-6
-            />
-            <p
-              onClick={() => setShowPasswordModal(true)}
-              className="text-lg font-extrabold text-transparent cursor-pointer bg-clip-text bg-gradient-to-r from-purple-600 to-blue-600"
-              style={{ fontSize: "1.5rem", lineHeight: "1.8rem" }}
-            >
-              Lab
-            </p>
-          </motion.div>
+            Inspitech{" "}
+            <span onClick={() => setShowPasswordModal(true)}>Lab</span>
+          </motion.h1>
 
           {/* Search */}
           <div className="flex items-center gap-3">
